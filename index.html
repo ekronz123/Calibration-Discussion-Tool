@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L8 Calibration Discussion Tool - DEMO | Q3 2026 Framework</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #eef1f5; padding: 0; font-size: 13px; }
+.app-header { background: #1a1a2e; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.app-header h1 { color: #ffffff; font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+.app-header .header-stats { display: flex; gap: 16px; align-items: center; }
+.app-header .header-stat { text-align: center; }
+.app-header .header-stat .hs-val { color: #64ffda; font-size: 18px; font-weight: 700; }
+.app-header .header-stat .hs-label { color: #8892b0; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
+.app-body { padding: 14px 20px; }
+.subtitle { font-size: 11px; color: #666; margin-bottom: 10px; }
+.stats-bar { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.category-headers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 4px; }
+.cat-header { text-align: center; padding: 6px 4px; border-radius: 6px 6px 0 0; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.cat-header .cat-stats { font-size: 10px; font-weight: normal; margin-top: 2px; }
+.cat-header.le { background: #BDD7EE; } .cat-header.hv1 { background: #C6EFCE; }
+.cat-header.hv2 { background: #FFEB9C; } .cat-header.hv3 { background: #F4B084; }
+.cat-header.tt { background: #D9E2F3; }
+.section-label { background: #2d3748; color: white; padding: 5px 14px; font-weight: 600; font-size: 11px; border-radius: 4px; margin: 10px 0 5px; letter-spacing: 0.3px; text-align: center; }
+.grid-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; min-height: 60px; }
+.column { border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px; min-height: 50px; background: #f8fafc; }
+.column.drag-over { background: #e8f4fd; border-color: #2196F3; box-shadow: inset 0 0 8px rgba(33,150,243,0.15); }
+.emp-card { background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 8px 6px 10px; margin-bottom: 3px; cursor: default; font-size: 11px; transition: all 0.2s; position: relative; border-left: 3px solid #ccc; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.emp-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); transform: translateY(-1px); }
+.emp-card.dragging { opacity: 0.4; }
+.emp-card.changed { background: #fff8e1 !important; border-color: #ffc107; border-left-color: #ff8f00 !important; }
+.emp-card.promoted { background: #e8f5e9; border-left-color: #4caf50 !important; }
+.emp-card.org-change { background: #f3e5f5; border-left-color: #9c27b0 !important; }
+.emp-card.cat-le { border-left-color: #90caf9; }
+.emp-card.cat-hv1 { border-left-color: #66bb6a; }
+.emp-card.cat-hv2 { border-left-color: #ffa726; }
+.emp-card.cat-hv3 { border-left-color: #ef5350; }
+.emp-card.cat-tt { border-left-color: #5c6bc0; }
+.emp-card .emp-name { font-weight: 700; font-size: 12px; margin-bottom: 3px; color: #1a202c; }
+.emp-card .emp-name a { color: #1a202c; text-decoration: none; border-bottom: 1px dotted #a0aec0; }
+.emp-card .emp-name a:hover { color: #4472C4; border-bottom-color: #4472C4; }
+.emp-card .emp-details { display: flex; gap: 4px; font-size: 10px; color: #718096; flex-wrap: wrap; }
+.emp-card .emp-details span { background: #f7fafc; border: 1px solid #e2e8f0; padding: 1px 4px; border-radius: 3px; }
+.emp-card .emp-details span.bold { font-weight: bold; color: #2d3748; }
+.emp-card .emp-details .arrow-up { color: #2d6a4f; font-weight: bold; }
+.emp-card .emp-details .arrow-down { color: #e63946; font-weight: bold; }
+.emp-card .emp-prev { font-size: 9px; color: #a0aec0; margin-top: 2px; font-style: italic; }
+.emp-card .edit-btn { display: none !important; } .emp-card .edit-btn.x { position: absolute; top: 4px; right: 6px; cursor: pointer; font-size: 11px; color: #a0aec0; }
+.emp-card .edit-btn:hover { color: #4472C4; }
+.key-row { display: flex; gap: 14px; margin: 8px 0; font-size: 11px; align-items: center; flex-wrap: wrap; background: white; padding: 6px 12px; border-radius: 4px; border: 1px solid #e2e8f0; }
+.key-item { display: flex; align-items: center; gap: 4px; }
+.key-swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #ccc; }
+.controls { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; align-items: center; }
+.controls button { padding: 6px 14px; border: 1px solid #d2d6dc; border-radius: 5px; background: white; cursor: pointer; font-size: 11px; font-weight: 500; transition: all 0.15s; }
+.controls { display: none !important; } .controls button:hover { background: #f7fafc; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.controls button.primary { background: #4472C4; color: white; border-color: #4472C4; }
+.controls button.primary:hover { background: #365fa0; }
+.controls button.excel { background: #217346; color: white; border-color: #217346; }
+.controls button.excel:hover { background: #1a5c38; }
+.controls select { padding: 5px 10px; border: 1px solid #d2d6dc; border-radius: 5px; font-size: 11px; background: white; }
+.gap-positive { color: #e63946; font-weight: bold; }
+.gap-negative { color: #2d6a4f; font-weight: bold; }
+.gap-zero { color: #718096; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,26,46,0.6); z-index: 1000; justify-content: center; align-items: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: white; border-radius: 10px; padding: 24px; width: 380px; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+.modal h3 { margin-bottom: 14px; font-size: 15px; color: #1a202c; }
+.modal label { display: block; font-size: 11px; margin-bottom: 4px; font-weight: 600; color: #4a5568; }
+.modal select { width: 100%; padding: 8px 10px; border: 1px solid #d2d6dc; border-radius: 5px; font-size: 12px; margin-bottom: 12px; }
+.modal .btn-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+.modal .btn-row button { padding: 8px 16px; border-radius: 5px; border: 1px solid #d2d6dc; cursor: pointer; font-size: 12px; font-weight: 500; }
+.modal .btn-row .save-btn { background: #4472C4; color: white; border-color: #4472C4; }
+.changes-panel { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; margin-top: 14px; max-height: 200px; overflow-y: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.changes-panel h4 { font-size: 12px; margin-bottom: 8px; color: #2d3748; }
+.changes-panel .change-item { font-size: 11px; padding: 3px 0; border-bottom: 1px solid #f7fafc; }
+.filter-bar { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+.filter-bar input { display: none !important; } .filter-bar input.x { padding: 6px 10px; border: 1px solid #d2d6dc; border-radius: 5px; font-size: 11px; width: 190px; }
+.note-icon { cursor: pointer; font-size: 10px; opacity: 0.5; }
+.note-icon:hover { opacity: 1; }
+.note-icon.has-note { opacity: 1; }
+.conf-badge { font-size: 8px; padding: 1px 5px; border-radius: 3px; font-weight: 600; margin-left: 3px; }
+.conf-badge.conf-Agreed { background: #c8e6c9; color: #2e7d32; }
+.conf-badge.conf-Tentative { background: #fff3e0; color: #e65100; }
+.conf-badge.conf-Revisit { background: #ffcdd2; color: #b71c1c; }
+.undo-history { background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-top: 10px; max-height: 180px; overflow-y: auto; }
+.undo-history h4 { font-size: 11px; color: #2d3748; margin-bottom: 6px; }
+.undo-history .hist-item { font-size: 10px; padding: 3px 0; border-bottom: 1px solid #f7fafc; display: flex; justify-content: space-between; align-items: center; }
+.undo-history .hist-item .revert-btn { font-size: 9px; color: #4472C4; cursor: pointer; border: none; background: none; }
+.undo-history .hist-item .revert-btn:hover { text-decoration: underline; }
+@media print {
+  @page { size: legal landscape; margin: 0.15in; }
+  body { padding: 0; font-size: 6px; transform: scale(0.7); transform-origin: top left; width: 143%; }
+  .app-header { padding: 4px 10px; }
+  .app-header h1 { font-size: 10px; }
+  .app-header .header-stats { display: none; }
+  .controls, .filter-bar, .changes-panel, .edit-btn, .modal-overlay, .subtitle, .key-row, .emp-prev { display: none !important; }
+  .app-body { padding: 4px; }
+  .stats-bar { font-size: 8px; padding: 2px 4px; margin-bottom: 3px; }
+  .category-headers { font-size: 7px; gap: 1px; margin-bottom: 2px; }
+  .cat-header { padding: 2px 1px; font-size: 7px; border-radius: 2px 2px 0 0; }
+  .cat-header .cat-stats { font-size: 6px; margin-top: 1px; }
+  .emp-card { padding: 1px 2px 1px 4px; margin-bottom: 1px; font-size: 6px; break-inside: avoid; box-shadow: none; border-width: 0.5px; border-left-width: 2px; }
+  .emp-card .emp-name { font-size: 6.5px; margin-bottom: 0; }
+  .emp-card .emp-name a { border: none !important; }
+  .emp-card .emp-details { font-size: 5.5px; gap: 1px; }
+  .emp-card .emp-details span { padding: 0 1px; border: none; }
+  .grid-container { gap: 1px; }
+  .column { padding: 1px; min-height: auto; }
+  .section-label { padding: 1px 4px; font-size: 7px; margin: 2px 0 1px; }
+  svg { width: 40px; height: 13px; }
+}
+</style>
+</head>
+<body>
+<div style="background:#ff6b35;color:white;text-align:center;padding:8px;font-size:12px;font-weight:600;letter-spacing:0.3px">🔒 VIEW-ONLY DEMO — Synthetic data only. No confidential information. Built with Kiro. | Q3 2026 "75 Blocker" framework with new employee-facing labels.</div>
+<div id="app"></div>
+<script>
+const EMPLOYEES = [
+  {
+    "login": "thayes0",
+    "name": "Tatum Hayes",
+    "tech": "Tech",
+    "lt": "leader_e",
+    "title": "Sr. Principal Technologist",
+    "perf": 3,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "rbrooks1",
+    "name": "Remy Brooks",
+    "tech": "Tech",
+    "lt": "leader_i",
+    "title": "Director, Creative MKTG",
+    "perf": 3,
+    "poten": 3,
+    "lp": "RM",
+    "ov": "HV3",
+    "note": "",
+    "til": 62,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 3,
+    "prevLp": "RM",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "tgarcia2",
+    "name": "Toby Garcia",
+    "tech": "Tech",
+    "lt": "leader_g",
+    "title": "Director, Product Management",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 74,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "tortiz3",
+    "name": "Tatum Ortiz",
+    "tech": "Non-Tech",
+    "lt": "leader_j",
+    "title": "Sr. Principal Technologist",
+    "perf": 4,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 20,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 1,
+    "prevLp": "SS",
+    "prevOv": "LE"
+  },
+  {
+    "login": "wkim4",
+    "name": "Winter Kim",
+    "tech": "Non-Tech",
+    "lt": "leader_f",
+    "title": "Sr. Principal Technologist",
+    "perf": 4,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 44,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "tvega5",
+    "name": "Tatum Vega",
+    "tech": "Tech",
+    "lt": "leader_f",
+    "title": "Director, Creative Dev",
+    "perf": 4,
+    "poten": 2,
+    "lp": "RM",
+    "ov": "HV3",
+    "note": "",
+    "til": 62,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 2,
+    "prevLp": "RM",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "uellis6",
+    "name": "Uri Ellis",
+    "tech": "Tech",
+    "lt": "leader_e",
+    "title": "Director, Category Leadership",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 44,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "jfoster7",
+    "name": "Jules Foster",
+    "tech": "Tech",
+    "lt": "leader_b",
+    "title": "Director, Category Leadership",
+    "perf": 4,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "mrivera8",
+    "name": "Marley Rivera",
+    "tech": "Non-Tech",
+    "lt": "leader_b",
+    "title": "Director, Prod Mgmt - Tech",
+    "perf": 3,
+    "poten": 3,
+    "lp": "RM",
+    "ov": "HV3",
+    "note": "",
+    "til": 32,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "RM",
+    "prevOv": "TT"
+  },
+  {
+    "login": "ttorres9",
+    "name": "Tatum Torres",
+    "tech": "Tech",
+    "lt": "leader_c",
+    "title": "Director, UX/Design",
+    "perf": 4,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "spatel10",
+    "name": "Sage Patel",
+    "tech": "Tech",
+    "lt": "leader_d",
+    "title": "Director, BizTech Leader",
+    "perf": 5,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 98,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "lnash11",
+    "name": "Lane Nash",
+    "tech": "Non-Tech",
+    "lt": "leader_d",
+    "title": "Sr. Principal Scientist",
+    "perf": 4,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 116,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "TT"
+  },
+  {
+    "login": "cvolkov12",
+    "name": "Casey Volkov",
+    "tech": "Tech",
+    "lt": "leader_j",
+    "title": "Sr. Principal Scientist",
+    "perf": 3,
+    "poten": 3,
+    "lp": "DN",
+    "ov": "HV1",
+    "note": "",
+    "til": 11,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 3,
+    "prevLp": "RM",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "jnguyen13",
+    "name": "Jules Nguyen",
+    "tech": "Tech",
+    "lt": "leader_j",
+    "title": "Director, BizTech Leader",
+    "perf": 3,
+    "poten": 4,
+    "lp": "RM",
+    "ov": "TT",
+    "note": "Q1 Promotion",
+    "til": 86,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 3,
+    "prevLp": "RM",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "mturner14",
+    "name": "Morgan Turner",
+    "tech": "Tech",
+    "lt": "leader_a",
+    "title": "Director, Creative MKTG",
+    "perf": 4,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 32,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "TT"
+  },
+  {
+    "login": "cdawson15",
+    "name": "Casey Dawson",
+    "tech": "Tech",
+    "lt": "leader_a",
+    "title": "GM, Subsidiary",
+    "perf": 5,
+    "poten": 4,
+    "lp": "RM",
+    "ov": "TT",
+    "note": "Q1 Promotion",
+    "til": 98,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 4,
+    "prevLp": "RM",
+    "prevOv": "TT"
+  },
+  {
+    "login": "mkim16",
+    "name": "Morgan Kim",
+    "tech": "Non-Tech",
+    "lt": "leader_a",
+    "title": "Director, Creative MKTG",
+    "perf": 3,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 98,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 5,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "mmoore17",
+    "name": "Morgan Moore",
+    "tech": "Tech",
+    "lt": "leader_f",
+    "title": "Director, Software Development",
+    "perf": 2,
+    "poten": 3,
+    "lp": "RM",
+    "ov": "HV2",
+    "note": "",
+    "til": 32,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 2,
+    "prevLp": "RM",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "kzhang18",
+    "name": "Kendall Zhang",
+    "tech": "Tech",
+    "lt": "leader_j",
+    "title": "Sr. Principal Technologist",
+    "perf": 4,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 50,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "kquinn19",
+    "name": "Kendall Quinn",
+    "tech": "Non-Tech",
+    "lt": "leader_c",
+    "title": "GM, Subsidiary",
+    "perf": 4,
+    "poten": 3,
+    "lp": "RM",
+    "ov": "TT",
+    "note": "",
+    "til": 20,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 2,
+    "prevLp": "RM",
+    "prevOv": "TT"
+  },
+  {
+    "login": "librahim20",
+    "name": "Logan Ibrahim",
+    "tech": "Non-Tech",
+    "lt": "leader_b",
+    "title": "Sr. Principal Technologist",
+    "perf": 3,
+    "poten": 2,
+    "lp": "RM",
+    "ov": "HV2",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "vgarcia21",
+    "name": "Vesper Garcia",
+    "tech": "Tech",
+    "lt": "leader_e",
+    "title": "Director, Product Management",
+    "perf": 5,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 50,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "TT"
+  },
+  {
+    "login": "mfoster22",
+    "name": "Morgan Foster",
+    "tech": "Non-Tech",
+    "lt": "leader_e",
+    "title": "Director, Software Development",
+    "perf": 1,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "LE",
+    "note": "",
+    "til": 86,
+    "nest": "",
+    "prevPerf": 1,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "LE"
+  },
+  {
+    "login": "zjackson23",
+    "name": "Zion Jackson",
+    "tech": "Tech",
+    "lt": "leader_f",
+    "title": "Director, BizTech Leader",
+    "perf": 4,
+    "poten": 3,
+    "lp": "DN",
+    "ov": "HV1",
+    "note": "",
+    "til": 68,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 4,
+    "prevLp": "DN",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "qwang24",
+    "name": "Quinn Wang",
+    "tech": "Non-Tech",
+    "lt": "leader_j",
+    "title": "Director, Product MKTG",
+    "perf": 3,
+    "poten": 5,
+    "lp": "RM",
+    "ov": "TT",
+    "note": "",
+    "til": 62,
+    "nest": "Single",
+    "prevPerf": 4,
+    "prevPoten": 5,
+    "prevLp": "DN",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "vzhao25",
+    "name": "Vesper Zhao",
+    "tech": "Tech",
+    "lt": "leader_e",
+    "title": "Director, Category Leadership",
+    "perf": 4,
+    "poten": 2,
+    "lp": "RM",
+    "ov": "HV3",
+    "note": "Q1 Promotion",
+    "til": 56,
+    "nest": "Single",
+    "prevPerf": 5,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "jbrooks26",
+    "name": "Jamie Brooks",
+    "tech": "Tech",
+    "lt": "leader_g",
+    "title": "Director, UX/Design",
+    "perf": 3,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV1",
+    "note": "",
+    "til": 62,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "llopez27",
+    "name": "Logan Lopez",
+    "tech": "Non-Tech",
+    "lt": "leader_a",
+    "title": "Director, Product Management",
+    "perf": 4,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 38,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "TT"
+  },
+  {
+    "login": "aito28",
+    "name": "Alex Ito",
+    "tech": "Tech",
+    "lt": "leader_f",
+    "title": "Director, Creative MKTG",
+    "perf": 2,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV1",
+    "note": "",
+    "til": 56,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "zsingh29",
+    "name": "Zion Singh",
+    "tech": "Tech",
+    "lt": "leader_d",
+    "title": "Director, Creative MKTG",
+    "perf": 4,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "pnash30",
+    "name": "Peyton Nash",
+    "tech": "Non-Tech",
+    "lt": "leader_h",
+    "title": "Director, Functional MKTG",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 11,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "svolkov31",
+    "name": "Shay Volkov",
+    "tech": "Tech",
+    "lt": "leader_d",
+    "title": "GM, Subsidiary",
+    "perf": 3,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "Q1 Promotion",
+    "til": 11,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 5,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "omartine32",
+    "name": "Oakley Martinez",
+    "tech": "Non-Tech",
+    "lt": "leader_h",
+    "title": "Director, Creative MKTG",
+    "perf": 3,
+    "poten": 4,
+    "lp": "DN",
+    "ov": "HV1",
+    "note": "Q1 Promotion",
+    "til": 86,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "DN",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "zito33",
+    "name": "Zion Ito",
+    "tech": "Non-Tech",
+    "lt": "leader_a",
+    "title": "Sr. Principal Scientist",
+    "perf": 3,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 92,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "kclark34",
+    "name": "Kit Clark",
+    "tech": "Non-Tech",
+    "lt": "leader_c",
+    "title": "Director, Product MKTG",
+    "perf": 5,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 44,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "rpatel35",
+    "name": "Reese Patel",
+    "tech": "Non-Tech",
+    "lt": "leader_f",
+    "title": "Director, UX/Design",
+    "perf": 5,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 86,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "edavis36",
+    "name": "Ellis Davis",
+    "tech": "Tech",
+    "lt": "leader_g",
+    "title": "Director, Creative MKTG",
+    "perf": 5,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 5,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "abennett37",
+    "name": "Ari Bennett",
+    "tech": "Tech",
+    "lt": "leader_h",
+    "title": "Sr. Principal Technologist",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 26,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "dmoore38",
+    "name": "Drew Moore",
+    "tech": "Tech",
+    "lt": "leader_b",
+    "title": "GM, Subsidiary",
+    "perf": 3,
+    "poten": 4,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 62,
+    "nest": "Single",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "equinn39",
+    "name": "Ellis Quinn",
+    "tech": "Tech",
+    "lt": "leader_h",
+    "title": "Director, Software Development",
+    "perf": 4,
+    "poten": 2,
+    "lp": "RM",
+    "ov": "HV3",
+    "note": "",
+    "til": 0,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 1,
+    "prevLp": "DN",
+    "prevOv": "LE"
+  },
+  {
+    "login": "jortiz40",
+    "name": "Jordan Ortiz",
+    "tech": "Tech",
+    "lt": "leader_d",
+    "title": "Director, Category Leadership",
+    "perf": 3,
+    "poten": 2,
+    "lp": "RM",
+    "ov": "HV2",
+    "note": "",
+    "til": 20,
+    "nest": "Single",
+    "prevPerf": 3,
+    "prevPoten": 2,
+    "prevLp": "RM",
+    "prevOv": "HV2"
+  },
+  {
+    "login": "sgarcia41",
+    "name": "Sage Garcia",
+    "tech": "Tech",
+    "lt": "leader_e",
+    "title": "Director, BizTech Leader",
+    "perf": 4,
+    "poten": 5,
+    "lp": "SS",
+    "ov": "TT",
+    "note": "",
+    "til": 44,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "TT"
+  },
+  {
+    "login": "wnash42",
+    "name": "Wren Nash",
+    "tech": "Tech",
+    "lt": "leader_j",
+    "title": "Director, Legal",
+    "perf": 2,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV1",
+    "note": "",
+    "til": 86,
+    "nest": "Single",
+    "prevPerf": 1,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "LE"
+  },
+  {
+    "login": "wpark43",
+    "name": "Winter Park",
+    "tech": "Non-Tech",
+    "lt": "leader_c",
+    "title": "Director, Creative MKTG",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 50,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 4,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "rrivera44",
+    "name": "Riley Rivera",
+    "tech": "Non-Tech",
+    "lt": "leader_d",
+    "title": "Director, Legal",
+    "perf": 3,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV2",
+    "note": "",
+    "til": 38,
+    "nest": "",
+    "prevPerf": 2,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  },
+  {
+    "login": "pnash45",
+    "name": "Parker Nash",
+    "tech": "Non-Tech",
+    "lt": "leader_i",
+    "title": "Director, Software Development",
+    "perf": 4,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 98,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "jfoster46",
+    "name": "Jordan Foster",
+    "tech": "Non-Tech",
+    "lt": "leader_d",
+    "title": "Director, Creative MKTG",
+    "perf": 4,
+    "poten": 3,
+    "lp": "SS",
+    "ov": "HV3",
+    "note": "",
+    "til": 62,
+    "nest": "",
+    "prevPerf": 4,
+    "prevPoten": 3,
+    "prevLp": "SS",
+    "prevOv": "HV3"
+  },
+  {
+    "login": "squinn47",
+    "name": "Sage Quinn",
+    "tech": "Tech",
+    "lt": "leader_b",
+    "title": "Director, Product MKTG",
+    "perf": 3,
+    "poten": 2,
+    "lp": "SS",
+    "ov": "HV1",
+    "note": "",
+    "til": 98,
+    "nest": "",
+    "prevPerf": 3,
+    "prevPoten": 2,
+    "prevLp": "SS",
+    "prevOv": "HV1"
+  }
+];
+
+const OV_GRID = {
+  DN: {'1,1':'LE','1,2':'LE','1,3':'LE','1,4':'LE','1,5':'LE','2,1':'LE','2,2':'LE','2,3':'LE','2,4':'LE','2,5':'HV1','3,1':'LE','3,2':'LE','3,3':'HV1','3,4':'HV1','3,5':'HV1','4,1':'LE','4,2':'LE','4,3':'HV1','4,4':'HV1','4,5':'HV1','5,1':'LE','5,2':'HV1','5,3':'HV1','5,4':'HV1','5,5':'HV1'},
+  SS: {'1,1':'LE','1,2':'LE','1,3':'LE','1,4':'LE','1,5':'HV1','2,1':'LE','2,2':'HV1','2,3':'HV1','2,4':'HV1','2,5':'HV2','3,1':'LE','3,2':'HV1','3,3':'HV2','3,4':'HV3','3,5':'HV3','4,1':'LE','4,2':'HV2','4,3':'HV3','4,4':'TT','4,5':'TT','5,1':'HV1','5,2':'HV3','5,3':'HV3','5,4':'TT','5,5':'TT'},
+  RM: {'1,1':'HV1','1,2':'HV1','1,3':'HV1','1,4':'HV1','1,5':'HV1','2,1':'HV1','2,2':'HV2','2,3':'HV2','2,4':'HV3','2,5':'HV3','3,1':'HV1','3,2':'HV2','3,3':'HV3','3,4':'TT','3,5':'TT','4,1':'HV1','4,2':'HV3','4,3':'TT','4,4':'TT','4,5':'TT','5,1':'HV1','5,2':'TT','5,3':'TT','5,4':'TT','5,5':'TT'}
+};
+function calcOV(p,po,lp){const g=OV_GRID[lp];return g?(g[p+','+po]||null):null;}
+// Q3 2026 Employee-Facing Labels
+const OV_LABELS = {LE:'Below Expectations',HV1:'Meets Most Expectations',HV2:'Meets Expectations',HV3:'Exceeds Expectations',TT:'Significantly Exceeds'};
+const PERF_LABELS = {1:'Needs Improvement',2:'Near the Bar',3:'At the Bar',4:'Above the Bar',5:'Exceeds the Bar'};
+const POTEN_LABELS = {1:'Very Limited',2:'Limited',3:'Moderate',4:'High',5:'Very High'};
+const LP_LABELS = {DN:'Development Needed',SS:'Solid Strength',RM:'Role Model'};
+
+
+const CAT_ORDER=['LE','HV1','HV2','HV3','TT'];
+const CAT_PCTS={LE:5,HV1:35,HV2:25,HV3:15,TT:20};
+const CAT_PCTS_ALT={LE:5,HV1:10,HV2:45,HV3:20,TT:20};
+const QUARTER="Q3 2026";
+const GEN_TIME="DEMO - Q3 2026 75-Blocker Framework";
+
+let state={employees:JSON.parse(JSON.stringify(EMPLOYEES)),originalOV:{},changes:[],filter:'',ltFilter:'all',useAltPcts:true,notes:{},confidence:{},timerRunning:false,timerSeconds:3600,facilitatorMode:true,excludeCarlos:false,expandedFlag:null};
+EMPLOYEES.forEach(e=>{state.originalOV[e.login]=e.ov;});
+const ALL_LTS=[...new Set(EMPLOYEES.map(e=>e.lt).filter(Boolean))].sort();
+
+function getActivePcts(){return state.useAltPcts?CAT_PCTS_ALT:CAT_PCTS;}
+function getFiltered(){
+  return state.employees.filter(e=>{
+    if(state.excludeCarlos&&e.lt==='CB')return false;
+    if(state.ltFilter!=='all'&&e.lt!==state.ltFilter)return false;
+    return true;
+  });
+}
+function getByCategory(cat,tf){
+  return getFiltered().filter(e=>e.ov===cat&&(tf==='all'||e.tech===tf)).sort((a,b)=>a.name.localeCompare(b.name));
+}
+function getStats(pcts){
+  pcts=pcts||getActivePcts();
+  const pool=getFiltered();const total=pool.length;const stats={};
+  CAT_ORDER.forEach(cat=>{
+    const n=pool.filter(e=>e.ov===cat).length;
+    const target=Math.round(total*pcts[cat]/100);
+    stats[cat]={count:n,target,gap:n-target,pct:total>0?(n/total*100).toFixed(1):0,targetPct:pcts[cat]};
+  });
+  stats.total=total;return stats;
+}
+function isChanged(login){
+  return state.originalOV[login]!==state.employees.find(e=>e.login===login).ov||state.changes.some(c=>c.login===login);
+}
+function moveEmployee(login,newOV){
+  const emp=state.employees.find(e=>e.login===login);
+  if(!emp||emp.ov===newOV)return;
+  state.changes.push({type:'move',login,name:emp.name,from:emp.ov,to:newOV});
+  emp.ov=newOV;render();
+}
+function updateRating(login,field,value){
+  const emp=state.employees.find(e=>e.login===login);if(!emp)return;
+  const oldVal=emp[field];
+  if(field==='perf'||field==='poten')value=parseInt(value);
+  emp[field]=value;
+  state.changes.push({type:'rating',login,name:emp.name,field,from:oldVal,to:value});
+  const newOV=calcOV(emp.perf,emp.poten,emp.lp);
+  if(newOV&&newOV!==emp.ov){
+    state.changes.push({type:'auto-move',login,name:emp.name,from:emp.ov,to:newOV});
+    emp.ov=newOV;
+  }
+  render();
+}
+function undoLast(){
+  if(!state.changes.length)return;
+  const last=state.changes.pop();
+  const emp=state.employees.find(e=>e.login===last.login);if(!emp)return;
+  if(last.type==='move'||last.type==='auto-move')emp.ov=last.from;
+  else if(last.type==='rating'){
+    emp[last.field]=last.from;
+    if(state.changes.length&&state.changes[state.changes.length-1].type==='auto-move'&&state.changes[state.changes.length-1].login===last.login)
+      emp.ov=state.changes.pop().from;
+  }
+  render();
+}
+function resetAll(){if(!confirm('Reset all changes?'))return;state.employees=JSON.parse(JSON.stringify(EMPLOYEES));state.changes=[];state.notes={};state.confidence={};render();}
+
+function revertTo(idx){
+  // Revert all changes from the end back to index idx (inclusive)
+  if(!confirm('Revert this and all subsequent changes?'))return;
+  while(state.changes.length>idx){
+    const c=state.changes.pop();
+    const emp=state.employees.find(e=>e.login===c.login);
+    if(!emp)continue;
+    if(c.type==='move'||c.type==='auto-move')emp.ov=c.from;
+    else if(c.type==='rating')emp[c.field]=c.from;
+  }
+  render();
+}
+
+// Timer
+let timerInterval=null;
+function toggleTimer(){
+  if(state.timerRunning){
+    clearInterval(timerInterval);state.timerRunning=false;
+  } else {
+    state.timerRunning=true;
+    timerInterval=setInterval(()=>{
+      state.timerSeconds--;
+      if(state.timerSeconds<=0){clearInterval(timerInterval);state.timerRunning=false;alert('Time is up!');}
+      const el=document.getElementById('timer-display');
+      if(el)el.textContent=formatTimer(state.timerSeconds);
+      if(state.timerSeconds<=300&&el)el.style.color='#e63946';
+    },1000);
+  }
+  render();
+}
+function formatTimer(s){const m=Math.floor(s/60);const sec=s%60;return m+':'+(sec<10?'0':'')+sec;}
+function resetTimer(){state.timerSeconds=3600;state.timerRunning=false;if(timerInterval)clearInterval(timerInterval);render();}
+
+// Facilitator mode
+function toggleFacilitator(){state.facilitatorMode=!state.facilitatorMode;render();}
+
+let dragLogin=null;
+function onDragStart(e,login){dragLogin=login;e.target.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+function onDragEnd(e){e.target.classList.remove('dragging');document.querySelectorAll('.column').forEach(c=>c.classList.remove('drag-over'));}
+function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function onDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+function onDrop(e,cat){e.preventDefault();e.currentTarget.classList.remove('drag-over');if(dragLogin)moveEmployee(dragLogin,cat);dragLogin=null;}
+
+function openEditModal(login){
+  const emp=state.employees.find(e=>e.login===login);if(!emp)return;
+  document.getElementById('edit-modal').classList.add('active');
+  document.getElementById('edit-name').textContent=emp.name;
+  document.getElementById('edit-login').value=login;
+  document.getElementById('edit-perf').value=emp.perf;
+  document.getElementById('edit-poten').value=emp.poten;
+  document.getElementById('edit-lp').value=emp.lp;
+  updateOVPreview();
+}
+function updateOVPreview(){
+  const p=parseInt(document.getElementById('edit-perf').value);
+  const po=parseInt(document.getElementById('edit-poten').value);
+  const lp=document.getElementById('edit-lp').value;
+  const ov=calcOV(p,po,lp);document.getElementById('edit-ov-preview').textContent=ov?((OV_LABELS[ov]||ov)+' ('+ov+')'):'?';
+}
+function saveEdit(){
+  const login=document.getElementById('edit-login').value;
+  const emp=state.employees.find(e=>e.login===login);
+  const p=parseInt(document.getElementById('edit-perf').value);
+  const po=parseInt(document.getElementById('edit-poten').value);
+  const lp=document.getElementById('edit-lp').value;
+  if(emp.perf!==p)updateRating(login,'perf',p);
+  if(emp.poten!==po)updateRating(login,'poten',po);
+  if(emp.lp!==lp)updateRating(login,'lp',lp);
+  closeModal();
+}
+function closeModal(){document.getElementById('edit-modal').classList.remove('active');}
+
+// Notes
+function void(login){
+  const emp=state.employees.find(e=>e.login===login);
+  if(!emp)return;
+  const note=state.notes[login]||'';
+  const conf=state.confidence[login]||'';
+  const modal=document.createElement('div');
+  modal.id='note-modal';
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(26,26,46,0.6);z-index:1001;display:flex;justify-content:center;align-items:center';
+  modal.innerHTML='<div style="background:white;border-radius:10px;padding:24px;width:420px;box-shadow:0 8px 30px rgba(0,0,0,0.3)"><h3 style="margin-bottom:12px;font-size:15px">Notes: '+emp.name+'</h3><label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin-bottom:4px">Discussion Note</label><textarea id="note-text" style="width:100%;height:80px;padding:8px;border:1px solid #d2d6dc;border-radius:5px;font-size:12px;resize:vertical" placeholder="Add calibration notes...">'+note.replace(/'/g,"&#39;")+'</textarea><label style="font-size:11px;font-weight:600;color:#4a5568;display:block;margin:12px 0 4px">Decision Confidence</label><div style="display:flex;gap:8px"><label style="font-size:11px;cursor:pointer"><input type="radio" name="conf" value="Agreed" '+(conf==='Agreed'?'checked':'')+' style="margin-right:4px">Agreed</label><label style="font-size:11px;cursor:pointer"><input type="radio" name="conf" value="Tentative" '+(conf==='Tentative'?'checked':'')+' style="margin-right:4px">Tentative</label><label style="font-size:11px;cursor:pointer"><input type="radio" name="conf" value="Revisit" '+(conf==='Revisit'?'checked':'')+' style="margin-right:4px">Revisit</label><label style="font-size:11px;cursor:pointer"><input type="radio" name="conf" value="" '+(conf===''?'checked':'')+' style="margin-right:4px">None</label></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="document.getElementById(\'note-modal\').remove()" style="padding:8px 16px;border-radius:5px;border:1px solid #d2d6dc;cursor:pointer;font-size:12px">Cancel</button><button onclick="saveNote(\''+login+'\')" style="padding:8px 16px;border-radius:5px;border:1px solid #4472C4;background:#4472C4;color:white;cursor:pointer;font-size:12px">Save</button></div></div>';
+  document.body.appendChild(modal);
+}
+function saveNote(login){
+  const text=document.getElementById('note-text').value.trim();
+  const conf=document.querySelector('input[name=conf]:checked');
+  state.notes[login]=text;
+  state.confidence[login]=conf?conf.value:'';
+  document.getElementById('note-modal').remove();
+  render();
+}
+
+
+
+function arrow(curr,prev){
+  if(!prev||!curr||prev===0)return '';
+  if(curr>prev)return '<span class="arrow-up">\u2191</span>';
+  if(curr<prev)return '<span class="arrow-down">\u2193</span>';
+  return '';
+}
+function lpArrow(curr,prev){
+  const r={DN:1,SS:2,RM:3};
+  if(!r[curr]||!r[prev])return '';
+  if(r[curr]>r[prev])return '<span class="arrow-up">\u2191</span>';
+  if(r[curr]<r[prev])return '<span class="arrow-down">\u2193</span>';
+  return '';
+}
+
+function renderDonut(stats){
+  // SVG donut chart showing current vs target OV distribution
+  const size=130;const cx=size/2;const cy=size/2;const r=50;const r2=38;
+  const colors={LE:'#90caf9',HV1:'#66bb6a',HV2:'#ffa726',HV3:'#ef5350',TT:'#5c6bc0'};
+  let html='<div style="display:flex;gap:12px;align-items:center"><svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">';
+  // Actual distribution (outer ring)
+  let angle=0;
+  CAT_ORDER.forEach(cat=>{
+    const s=stats[cat];const pct=parseFloat(s.pct)/100;
+    if(pct<=0)return;
+    const startAngle=angle;const endAngle=angle+pct*Math.PI*2;
+    const x1=cx+r*Math.cos(startAngle-Math.PI/2);const y1=cy+r*Math.sin(startAngle-Math.PI/2);
+    const x2=cx+r*Math.cos(endAngle-Math.PI/2);const y2=cy+r*Math.sin(endAngle-Math.PI/2);
+    const largeArc=pct>0.5?1:0;
+    html+='<path d="M'+cx+','+cy+' L'+x1+','+y1+' A'+r+','+r+' 0 '+largeArc+',1 '+x2+','+y2+' Z" fill="'+colors[cat]+'" opacity="0.85"/>';
+    angle=endAngle;
+  });
+  // White center hole
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r2+'" fill="#f0f2f5"/>';
+  // Target ring (inner - more visible)
+  let angle2=0;const pcts=getActivePcts();
+  CAT_ORDER.forEach(cat=>{
+    const pct=pcts[cat]/100;if(pct<=0)return;
+    const startAngle=angle2;const endAngle=angle2+pct*Math.PI*2;
+    const ir=r2-1;
+    const x1=cx+ir*Math.cos(startAngle-Math.PI/2);const y1=cy+ir*Math.sin(startAngle-Math.PI/2);
+    const x2=cx+ir*Math.cos(endAngle-Math.PI/2);const y2=cy+ir*Math.sin(endAngle-Math.PI/2);
+    const largeArc=pct>0.5?1:0;
+    html+='<path d="M'+cx+','+cy+' L'+x1+','+y1+' A'+ir+','+ir+' 0 '+largeArc+',1 '+x2+','+y2+' Z" fill="'+colors[cat]+'" opacity="0.7" stroke="white" stroke-width="0.5"/>';
+    angle2=endAngle;
+  });
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r2-10)+'" fill="white"/>';
+  html+='</svg>';
+  html+='<div style="font-size:11px;color:#4a5568;line-height:1.8">';
+  CAT_ORDER.forEach(cat=>{
+    const s=stats[cat];
+    html+='<div><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+colors[cat]+';margin-right:4px"></span>'+(OV_LABELS[cat]||cat)+': '+s.pct+'%</div>';
+  });
+  html+='<div style="margin-top:2px;font-style:italic;color:#a0aec0">outer=actual, inner=target</div>';
+  html+='</div></div>';
+  return html;
+}
+
+function renderComplianceTracker(stats){
+  // Cascading compliance: start at TT, work down
+  // Calculate cascade: how many need to move from each category to the one below
+  const gaps={};
+  CAT_ORDER.forEach(cat=>{gaps[cat]=stats[cat].gap;});
+  // Cascade from TT down: TT->HV3->HV2->HV1->LE
+  const cascade=[];  // {from, to, count}
+  const order=['TT','HV3','HV2','HV1','LE'];
+  const running=Object.assign({},gaps); // working copy
+  for(let i=0;i<order.length-1;i++){
+    const from=order[i];
+    const to=order[i+1];
+    if(running[from]>0){
+      const moveDown=running[from];
+      cascade.push({from,to,count:moveDown});
+      running[from]=0;
+      running[to]+=moveDown;
+    }
+  }
+  // Also check if lower categories need to push up
+  for(let i=order.length-1;i>0;i--){
+    const from=order[i];
+    const to=order[i-1];
+    if(running[from]>0){
+      cascade.push({from,to,count:running[from]});
+      running[from]=0;
+      running[to]+=running[from];
+    }
+  }
+  const totalMoves=cascade.reduce((s,c)=>s+c.count,0);
+
+  // Compliance status logic
+  const ttGap=gaps['TT'];
+  const leCount=stats['LE'].count;
+  const allWithin1=CAT_ORDER.every(cat=>Math.abs(gaps[cat])<=1);
+  const ttNotHigh=ttGap<=1;
+  const hasLE=leCount>=1;
+
+  let status='red'; // default: not compliant
+  let label='';
+  let bgColor='';let borderColor='';
+
+  const movesText=' ('+totalMoves+' move'+(totalMoves!==1?'s':'')+' needed)';
+  if(allWithin1 && hasLE){
+    status='green'; label='\u2705 Compliant \u2014 0 moves needed'; bgColor='#e8f5e9'; borderColor='#a5d6a7';
+  } else if(ttNotHigh && hasLE && CAT_ORDER.every(cat=>Math.abs(gaps[cat])<=2)){
+    status='green'; label='\u2705 Nearly Compliant'+movesText; bgColor='#e8f5e9'; borderColor='#a5d6a7';
+  } else if(CAT_ORDER.every(cat=>Math.abs(gaps[cat])<=1) && !hasLE){
+    status='red'; label='\u26a0\ufe0f Flag: No LE assigned'+movesText; bgColor='#ffebee'; borderColor='#ef9a9a';
+  } else if(ttGap>1 && !hasLE){
+    status='red'; label='\u26a0\ufe0f Flag: TT over-indexed AND no LE'+movesText; bgColor='#ffebee'; borderColor='#ef9a9a';
+  } else if(CAT_ORDER.some(cat=>Math.abs(gaps[cat])<=1) && totalMoves<=3){
+    status='yellow'; label='\u26a0\ufe0f Close \u2014'+movesText; bgColor='#fffde7'; borderColor='#fff176';
+  } else {
+    status='red'; label='\u26a0\ufe0f '+totalMoves+' move'+(totalMoves!==1?'s':'')+' needed for compliance'; bgColor='#fff3e0'; borderColor='#ffcc80';
+  }
+
+  let html='<div style="background:'+bgColor+';border:1px solid '+borderColor+';border-radius:4px;padding:10px 14px;margin-bottom:8px">';
+  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><b style="font-size:12px">'+label+'</b></div>';
+  if(cascade.length>0 && status!=='green'){
+    html+='<div style="font-size:11px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">';
+    html+='<span style="color:#666">Cascading moves:</span>';
+    cascade.filter(c=>c.count>0).forEach(c=>{
+      html+='<span style="background:white;border:1px solid #ddd;padding:2px 8px;border-radius:3px"><b>'+c.count+'</b> from <b>'+(OV_LABELS[c.from]||c.from)+'</b> \u2192 <b>'+(OV_LABELS[c.to]||c.to)+'</b></span>';
+    });
+    html+='</div>';
+  }
+  if(status!=='green'){
+    html+='<div style="font-size:13px;margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-weight:600;color:#2d3748">Current gaps:</span>';
+    CAT_ORDER.forEach(cat=>{
+      const g=gaps[cat];
+      const clr=g>1?'#e63946':g<-1?'#2d6a4f':Math.abs(g)===1?'#e76f51':'#718096';
+      const bg=g>1?'#ffebee':g<-1?'#e8f5e9':Math.abs(g)===1?'#fff8e1':'#f7fafc';
+      html+='<span style="padding:3px 10px;border-radius:4px;font-weight:700;color:'+clr+';background:'+bg+';border:1px solid '+clr+'22">'+(OV_LABELS[cat]||cat)+'='+(g>0?'+':'')+g+'</span>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderRMVHPTracker(){
+  const pool=getFiltered();
+  const total=pool.length;
+  const rmCount=pool.filter(e=>e.lp==='RM').length;
+  const vhpCount=pool.filter(e=>e.poten===5).length;
+  const bothCount=pool.filter(e=>e.lp==='RM'&&e.poten===5).length;
+  const rmPct=total>0?(rmCount/total*100).toFixed(1):0;
+  const vhpPct=total>0?(vhpCount/total*100).toFixed(1):0;
+  const rmOver=rmPct>5;
+  const vhpOver=vhpPct>5;
+
+  let html='<div style="background:'+(rmOver||vhpOver?'#fff8e1':'#f1f8e9')+';border:1px solid '+(rmOver||vhpOver?'#ffe082':'#c5e1a5')+';border-radius:4px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:11px">';
+  // RM tracker
+  html+='<span><b>Role Model (RM):</b> '+rmCount+'/'+total+' ('+rmPct+'%) '+(rmOver?'<span style="color:#e65100;font-weight:bold">\u26a0 Over 5%</span>':'<span style="color:#2d6a4f">\u2713 OK</span>')+'</span>';
+  // VHP tracker
+  html+='<span><b>Very High Potential (5):</b> '+vhpCount+'/'+total+' ('+vhpPct+'%) '+(vhpOver?'<span style="color:#e65100;font-weight:bold">\u26a0 Over 5%</span>':'<span style="color:#2d6a4f">\u2713 OK</span>')+'</span>';
+  // Both
+  if(bothCount>0) html+='<span><b>\u2b50\u2b50 Both RM+VHP:</b> '+bothCount+'</span>';
+  html+='</div>';
+  return html;
+}
+
+function renderFlags(){
+  const pool=getFiltered();
+  const ovRank={LE:0,HV1:1,HV2:2,HV3:3,TT:4};
+
+  // YoY HV1: HV1 in both current and prior year
+  const yoyHV1=pool.filter(e=>e.ov==='HV1'&&e.prevOv==='HV1');
+  // YoY TT: TT in both current and prior year
+  const yoyTT=pool.filter(e=>e.ov==='TT'&&e.prevOv==='TT');
+  // Drop >1 OV: fell 2+ categories
+  const bigDrop=pool.filter(e=>{
+    const curr=ovRank[e.ov];const prev=ovRank[e.prevOv];
+    return prev!==undefined&&curr!==undefined&&(prev-curr)>=2;
+  });
+  // L8 Tech ICs: Tech role with "Sr. Principal" or "Principal" in title (ICs, not Directors)
+  const techICs=pool.filter(e=>{
+    const t=(e.title||'').toLowerCase();
+    return (t.includes('principal')||t.includes('scientist'))&&!t.includes('director');
+  });
+
+  if(yoyHV1.length===0&&yoyTT.length===0&&bigDrop.length===0&&techICs.length===0)return '';
+
+  let html='<div style="background:white;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;margin-bottom:8px">';
+  html+='<div style="font-size:12px;font-weight:600;margin-bottom:8px;color:#2d3748">\ud83d\udcca Talent Trend Inspection</div>';
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">';
+  if(yoyHV1.length>0)html+='<span onclick="toggleFlag(\'yoyHV1\')" style="cursor:pointer;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:#bbdefb;color:#1565c0;border:1px solid #90caf9">YoY HV1: '+yoyHV1.length+'</span>';
+  if(yoyTT.length>0)html+='<span onclick="toggleFlag(\'yoyTT\')" style="cursor:pointer;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:#e1bee7;color:#6a1b9a;border:1px solid #ce93d8">YoY TT: '+yoyTT.length+'</span>';
+  if(bigDrop.length>0)html+='<span onclick="toggleFlag(\'bigDrop\')" style="cursor:pointer;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:#ffcdd2;color:#b71c1c;border:1px solid #ef9a9a">OV Drop >1: '+bigDrop.length+'</span>';
+  if(techICs.length>0)html+='<span onclick="toggleFlag(\'techICs\')" style="cursor:pointer;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:#b2dfdb;color:#00695c;border:1px solid #80cbc4">L8 Tech ICs: '+techICs.length+'</span>';
+  html+='</div>';
+
+  // Expandable tables
+  const flags={yoyHV1,yoyTT,bigDrop,techICs};
+  const labels={yoyHV1:'YoY HV1 (Same OV 2 consecutive years)',yoyTT:'YoY TT (Sustained Top Tier)',bigDrop:'OV Drop >1 Category',techICs:'L8 Tech ICs (Individual Contributors)'};
+  const colors={yoyHV1:'#1565c0',yoyTT:'#6a1b9a',bigDrop:'#b71c1c',techICs:'#00695c'};
+
+  Object.keys(flags).forEach(key=>{
+    const list=flags[key];
+    if(list.length===0)return;
+    html+='<div id="flag-'+key+'" style="display:'+(state.expandedFlag===key?'block':'none')+';margin-top:6px">';
+    html+='<div style="font-size:11px;font-weight:600;color:'+colors[key]+';margin-bottom:4px">'+labels[key]+'</div>';
+    html+='<table style="width:100%;border-collapse:collapse;font-size:10px"><tr style="background:#f7fafc"><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">Name</th><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">OV (now)</th><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">OV (prior)</th><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">TIL</th><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">Title</th><th style="padding:3px 6px;text-align:left;border-bottom:1px solid #e2e8f0">LT</th></tr>';
+    list.sort((a,b)=>a.name.localeCompare(b.name)).forEach(e=>{
+      html+='<tr><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0"><b>'+e.name+'</b></td><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0">'+e.ov+'</td><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0">'+(e.prevOv||'-')+'</td><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0">'+e.til+'</td><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0">'+(e.title||'')+'</td><td style="padding:3px 6px;border-bottom:1px solid #f0f0f0">'+e.lt+'</td></tr>';
+    });
+    html+='</table></div>';
+  });
+
+  html+='</div>';
+  return html;
+}
+
+function toggleFlag(key){
+  state.expandedFlag=state.expandedFlag===key?null:key;
+  render();
+}
+
+function renderCard(emp){
+  const changed=isChanged(emp.login);
+  let cls='emp-card cat-'+emp.ov.toLowerCase();
+  if(changed)cls+=' changed';
+  else if(emp.note&&emp.note.includes('Promotion'))cls+=' promoted';
+  else if(emp.note&&emp.note.includes('Org Change'))cls+=' org-change';
+  const prevOV=state.originalOV[emp.login];
+  const showPrev=prevOV!==emp.ov?'<div class="emp-prev">was '+prevOV+'</div>':'';
+  const nest=emp.nest?'<span>'+emp.nest+'</span>':'';
+  const pArr=arrow(emp.perf,emp.prevPerf);
+  const poArr=arrow(emp.poten,emp.prevPoten);
+  const lpArr=lpArrow(emp.lp,emp.prevLp);
+  const phoneLink='#demo-'+emp.login;
+  const isRM=emp.lp==='RM';
+  const isVHP=emp.poten===5;
+  const starBadge=isRM&&isVHP?'<span title="Role Model + Very High Potential" style="color:#ff8f00">\u2b50\u2b50</span>':isRM?'<span title="Role Model LP" style="color:#ff8f00">\u2b50</span>':isVHP?'<span title="Very High Potential" style="color:#ff8f00">\u2b50</span>':'';
+  const ltDisplay=emp.lt?'<span style="font-size:9px;color:#8892b0">LT: '+emp.lt+'</span>':'';
+  const noteText=state.notes[emp.login]||'';
+  const noteIcon=noteText?'<span class="note-icon has-note" onclick="void(\''+emp.login+'\')">\ud83d\udcdd</span>':'<span class="note-icon" onclick="void(\''+emp.login+'\')">\ud83d\udcac</span>';
+  const conf=state.confidence[emp.login];
+  const confBadge=conf?'<span class="conf-badge conf-'+conf+'">'+conf+'</span>':'';
+  return '<div class="'+cls+'" '+(state.facilitatorMode?'':'draggable="true" ondragstart="onDragStart(event,\''+emp.login+'\')" ondragend="onDragEnd(event)"')+'>'
+    +(!state.facilitatorMode?'<span class="edit-btn" onclick="openEditModal(\''+emp.login+'\')">&#9998;</span>':'')
+    +'<div class="emp-name"><a href="'+phoneLink+'" target="_blank">'+emp.name+'</a> '+starBadge+' '+confBadge+'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center">'+ltDisplay+noteIcon+'</div>'
+    +'<div class="emp-details"><span>P:'+emp.perf+pArr+'</span><span>Po:'+emp.poten+poArr+'</span><span class="'+(emp.lp==='RM'?'bold':'')+'">'+emp.lp+lpArr+'</span><span>TIL:'+emp.til+'</span>'+nest+'</div>'
+    +showPrev+'</div>';
+}
+function renderSection(tf){
+  const f=state.filter;
+  return CAT_ORDER.map(cat=>{
+    const emps=getByCategory(cat,tf).filter(e=>!f||e.name.toLowerCase().includes(f)||e.login.toLowerCase().includes(f));
+    return '<div class="column" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,\''+cat+'\')">'+emps.map(renderCard).join('')+'</div>';
+  }).join('');
+}
+function render(){
+  const stats=getStats();const n=state.changes.length;
+  const ltOpts='<option value="all">All Leaders</option>'+ALL_LTS.map(lt=>'<option value="'+lt+'"'+(state.ltFilter===lt?' selected':'')+'>'+lt+'</option>').join('');
+  document.getElementById('app').innerHTML=
+    '<div class="app-header"><div style="display:flex;align-items:center;gap:12px"><svg width="70" height="22" viewBox="0 0 100 30"><path d="M62.4 21.8c-5.8 4.3-14.2 6.6-21.4 6.6-10.1 0-19.2-3.7-26.1-10 -.5-.5-.1-1.1.6-.7 7.4 4.3 16.6 6.9 26.1 6.9 6.4 0 13.4-1.3 19.9-4.1 1-.4 1.8.6.9 1.3z" fill="#FF9900"/><path d="M64.7 19.2c-.7-.9-4.9-.4-6.8-.2-.6.1-.7-.4-.1-.8 3.3-2.3 8.7-1.7 9.4-.9.6.8-.2 6.3-3.3 8.9-.5.4-.9.2-.7-.3.7-1.7 2.2-5.7 1.5-6.7z" fill="#FF9900"/></svg><h1>L8 Calibration '+QUARTER+' \u2014 Calibration Discussion Tool</h1></div><div class="header-stats"><div class="header-stat"><div class="hs-val">'+stats.total+'</div><div class="hs-label">Eligible</div></div><div class="header-stat"><div class="hs-val">'+n+'</div><div class="hs-label">Changes</div></div><div class="header-stat" style="background:rgba(255,255,255,0.1);padding:6px 10px;border-radius:4px;border:1px solid #64ffda44"><input type="checkbox" style="width:15px;height:15px;margin:0 5px 0 0;vertical-align:middle;cursor:pointer;accent-color:#64ffda" '+(state.excludeCarlos?'checked':'')+' onchange="state.excludeCarlos=this.checked;render()"><span style="color:#64ffda;font-size:10px;font-weight:600;vertical-align:middle">Exclude OL3<br>Direct L8s</span></div></div></div>'
+    +'<div class="app-body">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1"><div class="subtitle">VIEW-ONLY DEMO — Showing the tool layout and features. Click \u270e to edit ratings. Arrows show QoQ change. Generated: '+GEN_TIME+'</div>'
+    +(!state.facilitatorMode?'<div class="controls">'
+    +'<button onclick="undoLast()">\u21a9 Undo</button>'
+    +'<button onclick="resetAll()">Reset All</button>'
+    +'<button class="primary" onclick="exportText()">\ud83d\udcbe Save .txt</button>'
+    +'<button class="excel" onclick="exportExcel()">\ud83d\udcca Save Excel</button>'
+    +'<button onclick="generateEmail()" style="background:#1a73e8;color:white;border-color:#1a73e8">\ud83d\udce7 Email Summary</button>'
+    +'<button onclick="generateLeaderDoc()" style="background:#6b21a8;color:white;border-color:#6b21a8">\ud83d\udcc4 Leader Doc</button>'
+    +'<button onclick="window.print()" style="background:#5c6bc0;color:white;border-color:#5c6bc0">\ud83d\udda8 Print / PDF</button>'
+    
+    +'</div>':'')
+    +'<div class="key-row">'
+    +'<div class="key-item"><div class="key-swatch" style="background:#FFC000"></div> Changed</div>'
+    +'<div class="key-item"><div class="key-swatch" style="background:#92D050"></div> Promotion</div>'
+    +'<div class="key-item"><div class="key-swatch" style="background:#CDA4DE"></div> Org Change</div>'
+    +'<div class="key-item" style="margin-left:12px"><span class="arrow-up">\u2191</span> Up from Q3\'25</div>'
+    +'<div class="key-item"><span class="arrow-down">\u2193</span> Down from Q3\'25</div>'
+    +'</div>'
+    +'<div class="filter-bar">'
+    +'<input type="text" placeholder="Search name/login..." oninput="state.filter=this.value.toLowerCase();render()" value="'+state.filter+'">'
+    +'<select onchange="state.ltFilter=this.value;render()">'+ltOpts+'</select>'
+    +'</div>'
+    +'</div>'+renderDonut(stats)+'</div>'
+    +renderComplianceTracker(stats)
+    +renderRMVHPTracker()
+    
+    +'<div class="stats-bar">Total Eligible = '+stats.total+(state.ltFilter!=='all'?' (filtered: '+state.ltFilter+')':'')+'</div>'
+    +'<div class="category-headers">'+CAT_ORDER.map(cat=>{
+      const s=stats[cat];const gc=s.gap>0?'gap-positive':s.gap<0?'gap-negative':'gap-zero';
+      const gs=s.gap>0?'+'+s.gap:s.gap;
+      return '<div class="cat-header '+cat.toLowerCase()+'">'+(OV_LABELS[cat]||cat)+' <small style="opacity:0.7">('+cat+')</small><br>('+s.targetPct+'% = '+s.target+')<div class="cat-stats">'+s.pct+'% (n='+s.count+', gap=<span class="'+gc+'">'+gs+'</span>)</div></div>';
+    }).join('')+'</div>'
+    +'<div class="section-label">Tech</div><div class="grid-container">'+renderSection('Tech')+'</div>'
+    +'<div class="section-label">Non-Tech</div><div class="grid-container">'+renderSection('Non-Tech')+'</div>'
+    +(n>0?'<div class="undo-history"><h4>\u23f3 Change History ('+n+') <button onclick="undoLast()" style="float:right;font-size:9px;padding:2px 8px;border:1px solid #d2d6dc;border-radius:3px;cursor:pointer;background:white">\u21a9 Undo Last</button></h4>'+state.changes.slice().reverse().map((c,i)=>{
+      const idx=state.changes.length-1-i;
+      let desc='';
+      if(c.type==='move')desc='\ud83d\udd04 '+c.name+': '+(OV_LABELS[c.from]||c.from)+' \u2192 '+(OV_LABELS[c.to]||c.to);
+      else if(c.type==='auto-move')desc='\u26a1 '+c.name+': auto '+(OV_LABELS[c.from]||c.from)+' \u2192 '+(OV_LABELS[c.to]||c.to);
+      else desc='\ud83d\udcdd '+c.name+': '+c.field+' '+c.from+' \u2192 '+c.to;
+      return '<div class="hist-item"><span>'+desc+'</span><button class="revert-btn" onclick="revertTo('+idx+')">revert</button></div>';
+    }).join('')+'</div>':'')
+    +'<div class="modal-overlay" id="edit-modal"><div class="modal"><h3>Edit: <span id="edit-name"></span></h3><input type="hidden" id="edit-login"><label>Performance</label><select id="edit-perf" onchange="updateOVPreview()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select><label>Potential</label><select id="edit-poten" onchange="updateOVPreview()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select><label>LP</label><select id="edit-lp" onchange="updateOVPreview()"><option value="DN">DN</option><option value="SS">SS</option><option value="RM">RM</option></select><label>Calculated Overall Value: <strong id="edit-ov-preview"></strong></label><div class="btn-row"><button onclick="closeModal()">Cancel</button><button class="save-btn" onclick="saveEdit()">Save</button></div></div></div>'
+    +'</div>'; // close app-body
+  // Restore search focus if user was typing
+  if(state.filter){
+    const inp=document.querySelector('.filter-bar input');
+    if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+  }
+}
+
+
+
+function exportText(){
+  if(!state.changes.length){alert('No changes to export.');return;}
+  const stats=getStats();const statsAlt=getStats(CAT_PCTS_ALT);
+  let t='L8 Calibration '+QUARTER+' Discussion Changes\n';
+  t+='Generated: '+new Date().toLocaleString()+'\n';
+  t+='Total Eligible: '+stats.total+'\n\n';
+  t+='Category Summary (Standard: LE5/HV1-35/HV2-25/HV3-15/TT20):\n';
+  CAT_ORDER.forEach(cat=>{const s=stats[cat];t+='  '+cat+': '+s.count+'/'+s.target+' ('+s.pct+'%, gap='+(s.gap>0?'+':'')+s.gap+')\n';});
+  t+='\nCategory Summary (Alternate: LE5/HV1-10/HV2-45/HV3-20/TT20):\n';
+  CAT_ORDER.forEach(cat=>{const s=statsAlt[cat];t+='  '+cat+': '+s.count+'/'+s.target+' ('+s.pct+'%, gap='+(s.gap>0?'+':'')+s.gap+')\n';});
+  t+='\nChanges:\n';
+  state.changes.forEach((c,i)=>{
+    if(c.type==='move')t+='  '+(i+1)+'. MOVE: '+c.name+' '+(OV_LABELS[c.from]||c.from)+' -> '+(OV_LABELS[c.to]||c.to)+'\n';
+    else if(c.type==='auto-move')t+='  '+(i+1)+'. AUTO: '+c.name+' '+(OV_LABELS[c.from]||c.from)+' -> '+(OV_LABELS[c.to]||c.to)+'\n';
+    else t+='  '+(i+1)+'. RATE: '+c.name+' '+c.field+' '+c.from+' -> '+c.to+'\n';
+  });
+  t+='\nFinal State:\n';
+  t+='  Name | Login | OV | Perf | Poten | LP | Tech | Changed | Confidence | Note\n';
+  t+='  '+'-'.repeat(110)+'\n';
+  state.employees.forEach(e=>{
+    const ch=isChanged(e.login)?'YES (was '+state.originalOV[e.login]+')':'';
+    const conf=state.confidence[e.login]||'';
+    const note=state.notes[e.login]||'';
+    t+='  '+e.name+' | '+e.login+' | '+e.ov+' | '+e.perf+' | '+e.poten+' | '+e.lp+' | '+e.tech+' | '+ch+' | '+conf+' | '+note+'\n';
+  });
+  // Notes summary
+  const notedLogins=Object.keys(state.notes).filter(k=>state.notes[k]);
+  if(notedLogins.length>0){
+    t+='\nDiscussion Notes:\n';
+    notedLogins.forEach(login=>{
+      const emp=state.employees.find(e=>e.login===login);
+      const conf=state.confidence[login]||'';
+      t+='  '+( emp?emp.name:login)+' ['+conf+']: '+state.notes[login]+'\n';
+    });
+  }
+  navigator.clipboard.writeText(t).catch(()=>{});
+  const blob=new Blob([t],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  const ts=new Date().toISOString().slice(0,16).replace(/[:-]/g,'').replace('T','_');
+  a.href=url;a.download='5Blocker_Changes_'+ts+'.txt';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('Saved to file + copied to clipboard!');
+}
+
+function exportExcel(){
+  if(!state.changes.length){alert('No changes to export.');return;}
+  // Build CSV-like data for Excel (using xlsx library loaded from CDN)
+  if(typeof XLSX==='undefined'){
+    alert('Loading Excel library... click again in a moment.');
+    const s=document.createElement('script');
+    s.src='https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js';
+    s.onload=()=>exportExcel();
+    document.head.appendChild(s);
+    return;
+  }
+  const wb=XLSX.utils.book_new();
+  // Helper to build sheet data
+  function buildSheet(pcts,title){
+    const total=state.employees.length;
+    const rows=[];
+    rows.push(['L8 Calibration '+QUARTER+' - '+title]);
+    rows.push(['Generated: '+new Date().toLocaleString(),'','Total Eligible: '+total]);
+    rows.push([]);
+    // Stats row
+    const statsRow=['Category','Count','Target','Gap','Actual%','Target%'];
+    rows.push(statsRow);
+    CAT_ORDER.forEach(cat=>{
+      const n=state.employees.filter(e=>e.ov===cat).length;
+      const target=Math.round(total*pcts[cat]/100);
+      rows.push([cat,n,target,n-target,(n/total*100).toFixed(1)+'%',pcts[cat]+'%']);
+    });
+    rows.push([]);
+    // Employee data
+    rows.push(['Name','Login','OV','Perf','Poten','LP','Tech','LT','TIL','Nest','Changed From']);
+    state.employees.sort((a,b)=>{
+      const catIdx={LE:0,HV1:1,HV2:2,HV3:3,TT:4};
+      return (catIdx[a.ov]||0)-(catIdx[b.ov]||0)||a.name.localeCompare(b.name);
+    }).forEach(e=>{
+      const ch=isChanged(e.login)?state.originalOV[e.login]:'';
+      rows.push([e.name,e.login,e.ov,e.perf,e.poten,e.lp,e.tech,e.lt,e.til,e.nest,ch]);
+    });
+    return XLSX.utils.aoa_to_sheet(rows);
+  }
+  const ws1=buildSheet(CAT_PCTS,'Standard (5-35-25-15-20)');
+  const ws2=buildSheet(CAT_PCTS_ALT,'Alternate (5-10-45-20-20)');
+  XLSX.utils.book_append_sheet(wb,ws1,'Standard Distribution');
+  XLSX.utils.book_append_sheet(wb,ws2,'Alternate Distribution');
+  // Changes log sheet
+  const logRows=[['Changes Log'],[''],['#','Type','Name','Login','From','To','Field']];
+  state.changes.forEach((c,i)=>{
+    logRows.push([i+1,c.type,c.name,c.login,c.from||'',c.to||'',c.field||'']);
+  });
+  const ws3=XLSX.utils.aoa_to_sheet(logRows);
+  XLSX.utils.book_append_sheet(wb,ws3,'Changes Log');
+  const ts=new Date().toISOString().slice(0,16).replace(/[:-]/g,'').replace('T','_');
+  XLSX.writeFile(wb,'5Blocker_Discussion_'+ts+'.xlsx');
+  alert('Excel saved with 3 tabs: Standard OV%, Alternate OV%, Changes Log');
+}
+
+function generateEmail(){
+  const stats=getStats();
+  const n=state.changes.length;
+  const notedLogins=Object.keys(state.notes).filter(k=>state.notes[k]);
+  const revisits=Object.keys(state.confidence).filter(k=>state.confidence[k]==='Revisit');
+  const tentatives=Object.keys(state.confidence).filter(k=>state.confidence[k]==='Tentative');
+
+  let subj='NAS L8 Calibration Discussion Summary - '+QUARTER;
+  let body='Hi team,\n\nBelow is the summary from today\'s calibration discussion.\n\n';
+  body+='OVERVIEW\n';
+  body+='- Total eligible: '+stats.total+'\n';
+  body+='- Changes made: '+n+'\n';
+  body+='- Decisions agreed: '+Object.values(state.confidence).filter(v=>v==='Agreed').length+'\n';
+  body+='- Tentative (pending): '+tentatives.length+'\n';
+  body+='- Revisit needed: '+revisits.length+'\n\n';
+
+  body+='CURVE STATUS\n';
+  CAT_ORDER.forEach(cat=>{const s=stats[cat];body+='  '+(OV_LABELS[cat]||cat)+': '+s.count+'/'+s.target+' ('+s.pct+'%, gap='+(s.gap>0?'+':'')+s.gap+')\n';});
+  body+='\n';
+
+  if(n>0){
+    body+='CHANGES MADE (by Leader)\n';
+    // Group changes by LT, then combine per person
+    const changesByLT={};
+    state.changes.forEach(c=>{
+      const emp=state.employees.find(e=>e.login===c.login);
+      const lt=emp?emp.lt:'Unknown';
+      if(!changesByLT[lt])changesByLT[lt]={};
+      if(!changesByLT[lt][c.login])changesByLT[lt][c.login]={name:c.name,items:[]};
+      if(c.type==='move')changesByLT[lt][c.login].items.push((OV_LABELS[c.from]||c.from)+' -> '+(OV_LABELS[c.to]||c.to));
+      else if(c.type==='auto-move')changesByLT[lt][c.login].items.push('auto '+(OV_LABELS[c.from]||c.from)+' -> '+(OV_LABELS[c.to]||c.to));
+      else changesByLT[lt][c.login].items.push(c.field+' '+c.from+' -> '+c.to);
+    });
+    Object.keys(changesByLT).sort().forEach(lt=>{
+      body+='\n  '+lt+':\n';
+      Object.values(changesByLT[lt]).forEach(person=>{
+        body+='    - '+person.name+': '+person.items.join(', ')+'\n';
+      });
+    });
+    body+='\n';
+  }
+
+  if(revisits.length>0){
+    body+='ACTION NEEDED - REVISIT\n';
+    revisits.forEach(login=>{
+      const emp=state.employees.find(e=>e.login===login);
+      body+='  - '+(emp?emp.name:login)+': '+(state.notes[login]||'No note')+'\n';
+    });
+    body+='\n';
+  }
+
+  if(tentatives.length>0){
+    body+='PENDING CONFIRMATION\n';
+    tentatives.forEach(login=>{
+      const emp=state.employees.find(e=>e.login===login);
+      body+='  - '+(emp?emp.name:login)+': '+(state.notes[login]||'No note')+'\n';
+    });
+    body+='\n';
+  }
+
+  if(notedLogins.length>0){
+    body+='DISCUSSION NOTES\n';
+    notedLogins.forEach(login=>{
+      const emp=state.employees.find(e=>e.login===login);
+      const conf=state.confidence[login]?'['+state.confidence[login]+'] ':'';
+      body+='  - '+(emp?emp.name:login)+' '+conf+': '+state.notes[login]+'\n';
+    });
+    body+='\n';
+  }
+
+  body+='ACTION REQUIRED\nCan you please make the changes for your leaders in Manager Hub.\n\nBest,\n[Your name]';
+
+  // Open mailto link
+  const mailto='mailto:?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+  window.open(mailto);
+  // Also copy to clipboard
+  navigator.clipboard.writeText(body).catch(()=>{});
+  alert('Email draft opened + copied to clipboard!');
+}
+
+function generateLeaderDoc(){
+  // Generate a printable HTML document with all leaders one after another
+  const allEmps=state.employees;
+  const total=allEmps.length;
+  const pcts=getActivePcts();
+  const overallStats=getStats();
+
+  // Group by LT
+  const byLT={};
+  allEmps.forEach(e=>{const lt=e.lt||'Direct';if(!byLT[lt])byLT[lt]=[];byLT[lt].push(e);});
+
+  let h='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>NAS L8 Leader Overviews - '+QUARTER+'</title>';
+  h+='<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Segoe UI,sans-serif;padding:20px;font-size:11px;color:#1a202c}';
+  h+='@media print{.no-print{display:none}body{padding:10px}.leader-section{page-break-inside:avoid}}';
+  h+='.header{background:#1a1a2e;color:white;padding:14px 20px;border-radius:6px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}';
+  h+='.header h1{font-size:16px}.header .meta{font-size:10px;color:#aaa}';
+  h+='.overall{background:#f7fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px 16px;margin-bottom:20px}';
+  h+='.overall h3{font-size:12px;margin-bottom:6px}';
+  h+='.overall .stats{display:flex;gap:16px;font-size:11px;flex-wrap:wrap}';
+  h+='.overall .stat{background:white;border:1px solid #e2e8f0;border-radius:4px;padding:6px 12px;text-align:center}';
+  h+='.overall .stat .val{font-size:18px;font-weight:700}';
+  h+='.overall .stat .lbl{font-size:8px;color:#718096;text-transform:uppercase}';
+  h+='.leader-section{background:white;border:1px solid #e2e8f0;border-radius:6px;padding:14px;margin-bottom:14px}';
+  h+='.leader-section h2{font-size:13px;margin-bottom:8px;color:#1a1a2e;border-bottom:2px solid #e2e8f0;padding-bottom:4px}';
+  h+='.leader-stats{display:flex;gap:10px;font-size:10px;margin-bottom:8px;flex-wrap:wrap}';
+  h+='.leader-stats .pill{padding:2px 8px;border-radius:3px;font-weight:600}';
+  h+='.pill-le{background:#BDD7EE}.pill-hv1{background:#C6EFCE}.pill-hv2{background:#FFEB9C}.pill-hv3{background:#F4B084}.pill-tt{background:#D9E2F3}';
+  h+='.gap-ok{color:#2d6a4f}.gap-over{color:#e63946}.gap-under{color:#e76f51}';
+  h+='table{width:100%;border-collapse:collapse;margin-top:6px}th{background:#f0f2f5;padding:4px 6px;text-align:left;font-size:9px;border-bottom:1px solid #ddd}';
+  h+='td{padding:3px 6px;font-size:9px;border-bottom:1px solid #f5f5f5}.crit-row{background:#fff5f5}';
+  h+='</style></head><body>';
+
+  h+='<div class="no-print" style="margin-bottom:12px"><button onclick="window.print()" style="padding:8px 16px;font-size:12px;cursor:pointer;border-radius:4px;border:1px solid #ccc">\ud83d\udda8 Print / Save as PDF</button></div>';
+
+  // Header
+  h+='<div class="header"><h1>NAS L8 Leader Overviews \u2014 '+QUARTER+'</h1><div class="meta">Generated: '+new Date().toLocaleString()+'</div></div>';
+
+  // Overall summary
+  const totalMoves=CAT_ORDER.reduce((s,cat)=>{const g=overallStats[cat].gap;return s+(g>0?g:0);},0);
+  h+='<div class="overall"><h3>Overall Curve Status</h3><div class="stats">';
+  h+='<div class="stat"><div class="val">'+total+'</div><div class="lbl">Total Eligible</div></div>';
+  CAT_ORDER.forEach(cat=>{
+    const s=overallStats[cat];const gc=s.gap>0?'gap-over':s.gap<0?'gap-under':'gap-ok';
+    h+='<div class="stat"><div class="val" style="font-size:14px">'+s.count+'</div><div class="lbl">'+(OV_LABELS[cat]||cat)+' ('+s.pct+'%, gap='+(s.gap>0?'+':'')+s.gap+')</div></div>';
+  });
+  h+='<div class="stat"><div class="val" style="color:'+(totalMoves===0?'#2d6a4f':'#e63946')+'">'+totalMoves+'</div><div class="lbl">Moves Needed</div></div>';
+  h+='</div></div>';
+
+  // Each leader
+  Object.keys(byLT).sort().forEach(lt=>{
+    const group=byLT[lt];
+    const ltTotal=group.length;
+    const ovDist={};CAT_ORDER.forEach(cat=>{ovDist[cat]=group.filter(e=>e.ov===cat).length;});
+    const ltMoves=CAT_ORDER.reduce((s,cat)=>{const target=Math.round(ltTotal*pcts[cat]/100);const gap=ovDist[cat]-target;return s+(gap>0?gap:0);},0);
+    const changed=group.filter(e=>isChanged(e.login));
+
+    h+='<div class="leader-section">';
+    h+='<h2>'+lt+' ('+ltTotal+' people'+(changed.length>0?', '+changed.length+' changed':'')+') \u2014 '+(ltMoves===0?'\u2705 Compliant':'\u26a0\ufe0f '+ltMoves+' moves needed')+'</h2>';
+    // Full curve bar
+    h+='<div style="display:flex;width:100%;height:24px;border-radius:4px;overflow:hidden;margin-bottom:8px;font-size:9px;font-weight:600">';
+    const barColors={LE:'#BDD7EE',HV1:'#C6EFCE',HV2:'#FFEB9C',HV3:'#F4B084',TT:'#D9E2F3'};
+    CAT_ORDER.forEach(cat=>{
+      const n=ovDist[cat]||0;
+      const pct=ltTotal>0?(n/ltTotal*100).toFixed(0):0;
+      const target=Math.round(ltTotal*pcts[cat]/100);
+      const gap=n-target;
+      const gapStr=gap>0?'+'+gap:gap;
+      const width=ltTotal>0?(n/ltTotal*100):20;
+      h+='<div style="background:'+barColors[cat]+';width:'+width+'%;display:flex;align-items:center;justify-content:center;min-width:60px;padding:2px 4px;border-right:1px solid white">'+(OV_LABELS[cat]||cat)+' ('+pcts[cat]+'% = '+target+')<br>'+pct+'% (n='+n+', gap='+gapStr+')</div>';
+    });
+    h+='</div>';
+
+    // Employee table
+    h+='<table><tr><th>Name</th><th>Level</th><th>Review Rating</th><th>Perf</th><th>Poten</th><th>LP</th><th>TIL</th><th>Nest</th><th>Changed</th><th>Confidence</th><th>Note</th></tr>';
+    group.sort((a,b)=>a.name.localeCompare(b.name)).forEach(e=>{
+      const ch=isChanged(e.login);
+      const origOV=state.originalOV[e.login];
+      const chText=ch?(origOV!==e.ov?(OV_LABELS[origOV]||origOV)+' \u2192 '+(OV_LABELS[e.ov]||e.ov):'ratings changed'):'';
+      const conf=state.confidence[e.login]||'';
+      const note=state.notes[e.login]||'';
+      const cls=ch?'crit-row':'';
+      h+='<tr class="'+cls+'"><td>'+e.name+'</td><td>L8</td><td>'+(OV_LABELS[e.ov]||e.ov)+'</td><td>'+e.perf+'</td><td>'+e.poten+'</td><td>'+e.lp+'</td><td>'+e.til+'</td><td>'+e.nest+'</td><td>'+chText+'</td><td>'+conf+'</td><td>'+note+'</td></tr>';
+    });
+    h+='</table></div>';
+  });
+
+  h+='</body></html>';
+  const w=window.open('','_blank','width=1000,height=800');
+  w.document.write(h);w.document.close();
+}
+
+render();
+
+</script>
+</body>
+</html>
