@@ -26,7 +26,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #eef1f5; 
 .grid-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; min-height: 60px; }
 .column { border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px; min-height: 50px; background: #f8fafc; }
 .column.drag-over { background: #e8f4fd; border-color: #2196F3; box-shadow: inset 0 0 8px rgba(33,150,243,0.15); }
-.emp-card { background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 8px 6px 10px; margin-bottom: 3px; cursor: default; font-size: 11px; transition: all 0.2s; position: relative; border-left: 3px solid #ccc; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.emp-card { background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 8px 6px 10px; margin-bottom: 3px; cursor: grab; font-size: 11px; transition: all 0.2s; position: relative; border-left: 3px solid #ccc; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
 .emp-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); transform: translateY(-1px); }
 .emp-card.dragging { opacity: 0.4; }
 .emp-card.changed { background: #fff8e1 !important; border-color: #ffc107; border-left-color: #ff8f00 !important; }
@@ -46,14 +46,14 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #eef1f5; 
 .emp-card .emp-details .arrow-up { color: #2d6a4f; font-weight: bold; }
 .emp-card .emp-details .arrow-down { color: #e63946; font-weight: bold; }
 .emp-card .emp-prev { font-size: 9px; color: #a0aec0; margin-top: 2px; font-style: italic; }
-.emp-card .edit-btn { display: none !important; } .emp-card .edit-btn.x { position: absolute; top: 4px; right: 6px; cursor: pointer; font-size: 11px; color: #a0aec0; }
+.emp-card .edit-btn { position: absolute; top: 4px; right: 6px; cursor: pointer; font-size: 11px; color: #a0aec0; }
 .emp-card .edit-btn:hover { color: #4472C4; }
 .key-row { display: flex; gap: 14px; margin: 8px 0; font-size: 11px; align-items: center; flex-wrap: wrap; background: white; padding: 6px 12px; border-radius: 4px; border: 1px solid #e2e8f0; }
 .key-item { display: flex; align-items: center; gap: 4px; }
 .key-swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #ccc; }
 .controls { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; align-items: center; }
 .controls button { padding: 6px 14px; border: 1px solid #d2d6dc; border-radius: 5px; background: white; cursor: pointer; font-size: 11px; font-weight: 500; transition: all 0.15s; }
-.controls { display: none !important; } .controls button:hover { background: #f7fafc; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.controls button:hover { background: #f7fafc; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .controls button.primary { background: #4472C4; color: white; border-color: #4472C4; }
 .controls button.primary:hover { background: #365fa0; }
 .controls button.excel { background: #217346; color: white; border-color: #217346; }
@@ -75,7 +75,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #eef1f5; 
 .changes-panel h4 { font-size: 12px; margin-bottom: 8px; color: #2d3748; }
 .changes-panel .change-item { font-size: 11px; padding: 3px 0; border-bottom: 1px solid #f7fafc; }
 .filter-bar { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-.filter-bar input { display: none !important; } .filter-bar input.x { padding: 6px 10px; border: 1px solid #d2d6dc; border-radius: 5px; font-size: 11px; width: 190px; }
+.filter-bar input { padding: 6px 10px; border: 1px solid #d2d6dc; border-radius: 5px; font-size: 11px; width: 190px; }
 .note-icon { cursor: pointer; font-size: 10px; opacity: 0.5; }
 .note-icon:hover { opacity: 1; }
 .note-icon.has-note { opacity: 1; }
@@ -110,10 +110,21 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #eef1f5; 
   .section-label { padding: 1px 4px; font-size: 7px; margin: 2px 0 1px; }
   svg { width: 40px; height: 13px; }
 }
+
+/* VIEW-ONLY LOCKDOWN */
+.controls { display: none !important; }
+.edit-btn { display: none !important; }
+.emp-card { cursor: default !important; pointer-events: none; }
+.filter-bar input[type="text"] { display: none !important; }
+.filter-bar select { pointer-events: auto; }
+.filter-bar { pointer-events: auto; }
+.note-icon { display: none !important; }
+.modal-overlay { display: none !important; }
+.undo-history { display: none !important; }
 </style>
 </head>
 <body>
-<div style="background:#ff6b35;color:white;text-align:center;padding:8px;font-size:12px;font-weight:600;letter-spacing:0.3px">🔒 VIEW-ONLY DEMO — Synthetic data only. No confidential information. Built with Kiro. | Q3 2026 "75 Blocker" framework with new employee-facing labels.</div>
+<div style="background:#ff6b35;color:white;text-align:center;padding:8px;font-size:12px;font-weight:600;letter-spacing:0.3px">🔒 VIEW-ONLY DEMO — Synthetic data only. No confidential information. No data can be entered. Built with Kiro. | Q3 2026 "75 Blocker" framework.</div>
 <div id="app"></div>
 <script>
 const EMPLOYEES = [
@@ -1002,7 +1013,7 @@ const CAT_PCTS_ALT={LE:5,HV1:10,HV2:45,HV3:20,TT:20};
 const QUARTER="Q3 2026";
 const GEN_TIME="DEMO - Q3 2026 75-Blocker Framework";
 
-let state={employees:JSON.parse(JSON.stringify(EMPLOYEES)),originalOV:{},changes:[],filter:'',ltFilter:'all',useAltPcts:true,notes:{},confidence:{},timerRunning:false,timerSeconds:3600,facilitatorMode:true,excludeCarlos:false,expandedFlag:null};
+let state={employees:JSON.parse(JSON.stringify(EMPLOYEES)),originalOV:{},changes:[],filter:'',ltFilter:'all',useAltPcts:true,notes:{},confidence:{},timerRunning:false,timerSeconds:3600,facilitatorMode:false,excludeCarlos:false,expandedFlag:null};
 EMPLOYEES.forEach(e=>{state.originalOV[e.login]=e.ov;});
 const ALL_LTS=[...new Set(EMPLOYEES.map(e=>e.lt).filter(Boolean))].sort();
 
@@ -1136,7 +1147,7 @@ function saveEdit(){
 function closeModal(){document.getElementById('edit-modal').classList.remove('active');}
 
 // Notes
-function void(login){
+function openNoteModal(login){
   const emp=state.employees.find(e=>e.login===login);
   if(!emp)return;
   const note=state.notes[login]||'';
@@ -1392,10 +1403,10 @@ function renderCard(emp){
   const starBadge=isRM&&isVHP?'<span title="Role Model + Very High Potential" style="color:#ff8f00">\u2b50\u2b50</span>':isRM?'<span title="Role Model LP" style="color:#ff8f00">\u2b50</span>':isVHP?'<span title="Very High Potential" style="color:#ff8f00">\u2b50</span>':'';
   const ltDisplay=emp.lt?'<span style="font-size:9px;color:#8892b0">LT: '+emp.lt+'</span>':'';
   const noteText=state.notes[emp.login]||'';
-  const noteIcon=noteText?'<span class="note-icon has-note" onclick="void(\''+emp.login+'\')">\ud83d\udcdd</span>':'<span class="note-icon" onclick="void(\''+emp.login+'\')">\ud83d\udcac</span>';
+  const noteIcon=noteText?'<span class="note-icon has-note" onclick="openNoteModal(\''+emp.login+'\')">\ud83d\udcdd</span>':'<span class="note-icon" onclick="openNoteModal(\''+emp.login+'\')">\ud83d\udcac</span>';
   const conf=state.confidence[emp.login];
   const confBadge=conf?'<span class="conf-badge conf-'+conf+'">'+conf+'</span>':'';
-  return '<div class="'+cls+'" '+(state.facilitatorMode?'':'draggable="true" ondragstart="onDragStart(event,\''+emp.login+'\')" ondragend="onDragEnd(event)"')+'>'
+  return '<div class="'+cls+'" '+(state.facilitatorMode?'':'draggable="false" ondragstart="void(0,\''+emp.login+'\')" ondragend="onDragEnd(event)"')+'>'
     +(!state.facilitatorMode?'<span class="edit-btn" onclick="openEditModal(\''+emp.login+'\')">&#9998;</span>':'')
     +'<div class="emp-name"><a href="'+phoneLink+'" target="_blank">'+emp.name+'</a> '+starBadge+' '+confBadge+'</div>'
     +'<div style="display:flex;justify-content:space-between;align-items:center">'+ltDisplay+noteIcon+'</div>'
@@ -1413,7 +1424,7 @@ function render(){
   const stats=getStats();const n=state.changes.length;
   const ltOpts='<option value="all">All Leaders</option>'+ALL_LTS.map(lt=>'<option value="'+lt+'"'+(state.ltFilter===lt?' selected':'')+'>'+lt+'</option>').join('');
   document.getElementById('app').innerHTML=
-    '<div class="app-header"><div style="display:flex;align-items:center;gap:12px"><svg width="70" height="22" viewBox="0 0 100 30"><path d="M62.4 21.8c-5.8 4.3-14.2 6.6-21.4 6.6-10.1 0-19.2-3.7-26.1-10 -.5-.5-.1-1.1.6-.7 7.4 4.3 16.6 6.9 26.1 6.9 6.4 0 13.4-1.3 19.9-4.1 1-.4 1.8.6.9 1.3z" fill="#FF9900"/><path d="M64.7 19.2c-.7-.9-4.9-.4-6.8-.2-.6.1-.7-.4-.1-.8 3.3-2.3 8.7-1.7 9.4-.9.6.8-.2 6.3-3.3 8.9-.5.4-.9.2-.7-.3.7-1.7 2.2-5.7 1.5-6.7z" fill="#FF9900"/></svg><h1>L8 Calibration '+QUARTER+' \u2014 Calibration Discussion Tool</h1></div><div class="header-stats"><div class="header-stat"><div class="hs-val">'+stats.total+'</div><div class="hs-label">Eligible</div></div><div class="header-stat"><div class="hs-val">'+n+'</div><div class="hs-label">Changes</div></div><div class="header-stat" style="background:rgba(255,255,255,0.1);padding:6px 10px;border-radius:4px;border:1px solid #64ffda44"><input type="checkbox" style="width:15px;height:15px;margin:0 5px 0 0;vertical-align:middle;cursor:pointer;accent-color:#64ffda" '+(state.excludeCarlos?'checked':'')+' onchange="state.excludeCarlos=this.checked;render()"><span style="color:#64ffda;font-size:10px;font-weight:600;vertical-align:middle">Exclude OL3<br>Direct L8s</span></div></div></div>'
+    '<div class="app-header"><div style="display:flex;align-items:center;gap:12px"><svg width="70" height="22" viewBox="0 0 100 30"><path d="M62.4 21.8c-5.8 4.3-14.2 6.6-21.4 6.6-10.1 0-19.2-3.7-26.1-10 -.5-.5-.1-1.1.6-.7 7.4 4.3 16.6 6.9 26.1 6.9 6.4 0 13.4-1.3 19.9-4.1 1-.4 1.8.6.9 1.3z" fill="#FF9900"/><path d="M64.7 19.2c-.7-.9-4.9-.4-6.8-.2-.6.1-.7-.4-.1-.8 3.3-2.3 8.7-1.7 9.4-.9.6.8-.2 6.3-3.3 8.9-.5.4-.9.2-.7-.3.7-1.7 2.2-5.7 1.5-6.7z" fill="#FF9900"/></svg><h1>L8 Calibration '+QUARTER+' \u2014 Calibration Discussion Tool</h1></div><div class="header-stats"><div class="header-stat"><div class="hs-val">'+stats.total+'</div><div class="hs-label">Eligible</div></div><div class="header-stat"><div class="hs-val">'+n+'</div><div class="hs-label">Changes</div></div><div class="header-stat" style="cursor:pointer" onclick="toggleFacilitator()"><div class="hs-val" style="font-size:14px">'+(state.facilitatorMode?'\ud83d\udc41 Present':'\u270f Edit')+'</div><div class="hs-label">Mode</div></div><div class="header-stat" style="background:rgba(255,255,255,0.1);padding:6px 10px;border-radius:4px;border:1px solid #64ffda44"><input type="checkbox" style="width:15px;height:15px;margin:0 5px 0 0;vertical-align:middle;cursor:pointer;accent-color:#64ffda" '+(state.excludeCarlos?'checked':'')+' onchange="state.excludeCarlos=this.checked;render()"><span style="color:#64ffda;font-size:10px;font-weight:600;vertical-align:middle">Exclude OL3<br>Direct L8s</span></div></div></div>'
     +'<div class="app-body">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1"><div class="subtitle">VIEW-ONLY DEMO — Showing the tool layout and features. Click \u270e to edit ratings. Arrows show QoQ change. Generated: '+GEN_TIME+'</div>'
     +(!state.facilitatorMode?'<div class="controls">'
